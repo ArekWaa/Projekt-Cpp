@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1636467560 source:c:\users\arek1\documents\studia\semestr3\projekt\splitter\main.cpp
+1637600709 source:c:\users\arek1\documents\studia\semestr3\projekt\splitter\main.cpp
 	<SFML/Window.hpp>
 	<SFML/Graphics.hpp>
 	<ctime>
 	<iostream>
 	<locale.h>
+	<string>
 
 1525808418 c:\sfml\include\sfml\graphics.hpp
 	<SFML/Window.hpp>

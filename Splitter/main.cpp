@@ -3,6 +3,8 @@
 #include <ctime>
 #include <iostream>
 #include <locale.h> //do obslugi polskich znakow
+#include <string>
+
 using namespace std;
 
 //klasy
@@ -76,6 +78,33 @@ public:
 
 };
 
+class ScreenLogOrReg    //Login Or Registration
+{
+public:
+    Button button1; //Zaloguj się
+    Button button2; //Zarejestruj
+    bool active = false;
+
+    ScreenLogOrReg() : button1(500, 75, 380, 250, sf::Color::White), button2(500, 75, 380, 370, sf::Color::White)
+    {
+        button1.text.setString(L"Zaloguj się");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString(L"Zarejestruj się");
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        button1.draw(window);
+        button2.draw(window);
+    }
+};
+
 class ScreenMainMenu
 {
 public:
@@ -122,10 +151,10 @@ public:
         title.setText("O aplikacji");
         title.setPosition(600, 20);
 
-        info.setText("\„Splitter\" to aplikacja s³u¿¹ca do równomiernego podzia³u obowi¹zków\nwœród wspó³lokatorów. Pozwala na dodawanie domowych obowiązków\nwykonywanych przez u¿ytkowników. Posiada system punktowy motywuj¹cy\ndo systematycznej pracy. U¿ytkownik dostaje punkty dostosowane\ndo trudnoœci oraz poœwiêconego czasu na dane zadanie (np. za wyrzucenie\nœmieci czy rozwieszenie prania) . W ka¿dym miesi¹cu wspó³lokatorzy\npowinni otrzymaæ podobn¹ sumê punktów. Aktualny stan punktów mo¿na\nœledziæ w oknie „Ranking” jako tabelê oraz w formie wykresu.");
+        info.setText("\„Splitter\" to aplikacja służąca do równomiernego podzia³u obowi¹zków\nwœród wspó³lokatorów. Pozwala na dodawanie domowych obowiązków\nwykonywanych przez u¿ytkowników. Posiada system punktowy motywuj¹cy\ndo systematycznej pracy. U¿ytkownik dostaje punkty dostosowane\ndo trudnoœci oraz poœwiêconego czasu na dane zadanie (np. za wyrzucenie\nœmieci czy rozwieszenie prania) . W ka¿dym miesi¹cu wspó³lokatorzy\npowinni otrzymaæ podobn¹ sumê punktów. Aktualny stan punktów mo¿na\nœledziæ w oknie „Ranking” jako tabelê oraz w formie wykresu.");
         info.setPosition(150, 200);
 
-        button1.text.setString("Powrót");
+        button1.text.setString(L"Powrót");
         button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
     }
@@ -143,12 +172,14 @@ public:
 int main()
 {
     setlocale(LC_CTYPE, "Polish");  //obsluga polskich znakow w napisach
+    //setlocale(LC_ALL, "" );
 
     //zmienne
+    ScreenLogOrReg logOrReg;
     ScreenMainMenu mainMenu;
     ScreenAplikacji oAplikacji;
 
-    mainMenu.active = true;
+    logOrReg.active = true;
 
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Splitter");
     window.setFramerateLimit(60);
@@ -184,6 +215,7 @@ int main()
         window.clear(sf::Color::Black);
 
         //rysowanie
+        if (logOrReg.active == true) logOrReg.drawScreen(window);
         if (mainMenu.active == true) mainMenu.drawScreen(window);
         if (oAplikacji.active == true) oAplikacji.drawScreen(window);
 
