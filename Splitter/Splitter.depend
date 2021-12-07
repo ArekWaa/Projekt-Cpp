@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1637600709 source:c:\users\arek1\documents\studia\semestr3\projekt\splitter\main.cpp
+1638217364 source:c:\users\arek1\documents\studia\semestr3\projekt\splitter\main.cpp
 	<SFML/Window.hpp>
 	<SFML/Graphics.hpp>
 	<ctime>

@@ -78,6 +78,50 @@ public:
 
 };
 
+class TextBox
+{
+public:
+    sf::RectangleShape body;
+    Text tekst;
+    bool isTyping = false;
+    string textString = "tetete";
+
+    TextBox(int x, int y)
+    {
+        body.setPosition(x,y);
+        body.setSize({300,50});
+        tekst.setPosition(x+5,y+5);
+        tekst.setText(textString);
+        tekst.text.setFillColor(sf::Color::Black);
+    }
+
+    void drawTextBox(sf::RenderWindow &window)
+    {
+        window.draw(body);
+        tekst.draw(window);
+    }
+
+    void asciiCheck(char litera)
+    {
+        if(litera != 8)
+        {
+            if (litera >= 48 && litera <= 57 || litera >= 65 && litera <= 90 || litera >= 97 && litera <= 122)
+            {
+                textString += litera;
+            }
+        }
+        else
+        {
+            if (textString.length() > 0)
+            {
+                textString = textString.substr(0, textString.length() - 1);
+            }
+        }
+
+        tekst.setText(textString);
+    }
+};
+
 class ScreenLogOrReg    //Login Or Registration
 {
 public:
@@ -102,6 +146,34 @@ public:
     {
         button1.draw(window);
         button2.draw(window);
+    }
+};
+
+class ScreenLogin
+{
+public:
+    Text title;
+    Button button1; //powrót
+    TextBox textBox1;
+    bool active = false;
+
+
+    ScreenLogin() : button1(200, 75, 100, 100, sf::Color::White), textBox1(300,300)
+    {
+        title.setText("Zaloguj się");
+        title.setPosition(550, 5);
+
+        button1.text.setString("Powrót");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        title.draw(window);
+        button1.draw(window);
+        textBox1.drawTextBox(window);
     }
 };
 
@@ -151,7 +223,7 @@ public:
         title.setText("O aplikacji");
         title.setPosition(600, 20);
 
-        info.setText("\„Splitter\" to aplikacja służąca do równomiernego podzia³u obowi¹zków\nwœród wspó³lokatorów. Pozwala na dodawanie domowych obowiązków\nwykonywanych przez u¿ytkowników. Posiada system punktowy motywuj¹cy\ndo systematycznej pracy. U¿ytkownik dostaje punkty dostosowane\ndo trudnoœci oraz poœwiêconego czasu na dane zadanie (np. za wyrzucenie\nœmieci czy rozwieszenie prania) . W ka¿dym miesi¹cu wspó³lokatorzy\npowinni otrzymaæ podobn¹ sumê punktów. Aktualny stan punktów mo¿na\nœledziæ w oknie „Ranking” jako tabelê oraz w formie wykresu.");
+        info.text.setString({"\„Splitter\" to aplikacja służąca do równomiernego podzia³u obowi¹zków\nwœród wspó³lokatorów. Pozwala na dodawanie domowychobowiązków\nwykonywanych przez u¿ytkowników. Posiada system punktowy motywuj¹cy\ndo systematycznej pracy. U¿ytkownik dostaje punkty \ ostosowane\ndo trudnoœci oraz poœwiêconego czasu na dane zadanie (np. za wyrzucenie\nœmieci czy rozwieszenie prania) . W ka¿dym miesi¹cu wspó³lokatorzy\npowinni otrzymaæ podobn¹ sumê punktów. Aktualny stan punktów mo¿na\nœledziæ w oknie „Ranking” jako tabelê oraz w formiewykresu."});
         info.setPosition(150, 200);
 
         button1.text.setString(L"Powrót");
@@ -176,10 +248,14 @@ int main()
 
     //zmienne
     ScreenLogOrReg logOrReg;
+    ScreenLogin login;
     ScreenMainMenu mainMenu;
     ScreenAplikacji oAplikacji;
 
-    logOrReg.active = true;
+    //logOrReg.active = true;
+    login.active = true;
+    //mainMenu.active = true;
+
 
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Splitter");
     window.setFramerateLimit(60);
@@ -209,15 +285,33 @@ int main()
                     oAplikacji.active = false;
                 }
             }
-            //guziki
+            else if (login.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && login.textBox1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    login.textBox1.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !login.textBox1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    login.textBox1.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && login.textBox1.isTyping == true)
+                {
+                    login.textBox1.asciiCheck(static_cast<char>(event.text.unicode));
+                }
+            }
+
         }
         // clear the window with black color
         window.clear(sf::Color::Black);
 
         //rysowanie
         if (logOrReg.active == true) logOrReg.drawScreen(window);
-        if (mainMenu.active == true) mainMenu.drawScreen(window);
-        if (oAplikacji.active == true) oAplikacji.drawScreen(window);
+        else if (login.active == true) login.drawScreen(window);
+        else if (mainMenu.active == true) mainMenu.drawScreen(window);
+        else if (oAplikacji.active == true) oAplikacji.drawScreen(window);
 
         window.display();
     }
