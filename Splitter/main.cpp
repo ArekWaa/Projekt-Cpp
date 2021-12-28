@@ -8,7 +8,6 @@
 using namespace std;
 
 //klasy
-
 class Text
 {
 public:
@@ -153,27 +152,93 @@ class ScreenLogin
 {
 public:
     Text title;
+    Text login;
+    Text password;
     Button button1; //powrót
+    Button button2; //zaloguj sie
     TextBox textBox1;
+    TextBox textBox2;
     bool active = false;
 
 
-    ScreenLogin() : button1(200, 75, 100, 100, sf::Color::White), textBox1(300,300)
+    ScreenLogin() : button1(200, 75, 540, 550, sf::Color::White), button2(200, 75, 540, 400, sf::Color::White), textBox1(500,200), textBox2(500,300)
     {
-        title.setText("Zaloguj się");
+        title.setText("Zaloguj sie");
         title.setPosition(550, 5);
 
-        button1.text.setString("Powrót");
+        login.setText("Login:");
+        login.setPosition(550,150);
+
+        password.setText("Haslo:");
+        password.setPosition(550,260);
+
+        button1.text.setString("Powrot");
         button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
         button1.text.setFillColor(sf::Color::Black);
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString("Zaloguj sie");
+        button2.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
     }
 
     void drawScreen(sf::RenderWindow &window)
     {
         title.draw(window);
+        login.draw(window);
+        password.draw(window);
         button1.draw(window);
+        button2.draw(window);
         textBox1.drawTextBox(window);
+        textBox2.drawTextBox(window);
+    }
+};
+
+class ScreenRegistration
+{
+public:
+    Text title;
+    Text login;
+    Text password;
+    Button button1; //powrót
+    Button button2; //zaloguj sie
+    TextBox textBox1;
+    TextBox textBox2;
+    bool active = false;
+
+
+    ScreenRegistration() : button1(200, 75, 540, 550, sf::Color::White), button2(200, 75, 540, 400, sf::Color::White), textBox1(500,200), textBox2(500,300)
+    {
+        title.setText("Zarejestruj sie");
+        title.setPosition(550, 5);
+
+        login.setText("Login:");
+        login.setPosition(550,150);
+
+        password.setText("Haslo:");
+        password.setPosition(550,260);
+
+        button1.text.setString("Powrot");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString("Zarejestruj sie");
+        button2.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        title.draw(window);
+        login.draw(window);
+        password.draw(window);
+        button1.draw(window);
+        button2.draw(window);
+        textBox1.drawTextBox(window);
+        textBox2.drawTextBox(window);
     }
 };
 
@@ -249,11 +314,13 @@ int main()
     //zmienne
     ScreenLogOrReg logOrReg;
     ScreenLogin login;
+    ScreenRegistration registration;
     ScreenMainMenu mainMenu;
     ScreenAplikacji oAplikacji;
 
     //logOrReg.active = true;
-    login.active = true;
+    //login.active = true;
+    registration.active = true;
     //mainMenu.active = true;
 
 
@@ -301,7 +368,55 @@ int main()
                 {
                     login.textBox1.asciiCheck(static_cast<char>(event.text.unicode));
                 }
+
+                if (event.type == sf::Event::MouseButtonPressed && login.textBox2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    login.textBox2.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !login.textBox2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    login.textBox2.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && login.textBox2.isTyping == true)
+                {
+                    login.textBox2.asciiCheck(static_cast<char>(event.text.unicode));
+                }
             }
+            else if (registration.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && registration.textBox1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.textBox1.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !registration.textBox1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.textBox1.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && registration.textBox1.isTyping == true)
+                {
+                    registration.textBox1.asciiCheck(static_cast<char>(event.text.unicode));
+                }
+
+                if (event.type == sf::Event::MouseButtonPressed && registration.textBox2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.textBox2.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !registration.textBox2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.textBox2.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && registration.textBox2.isTyping == true)
+                {
+                    registration.textBox2.asciiCheck(static_cast<char>(event.text.unicode));
+                }
+            }
+
 
         }
         // clear the window with black color
@@ -310,6 +425,7 @@ int main()
         //rysowanie
         if (logOrReg.active == true) logOrReg.drawScreen(window);
         else if (login.active == true) login.drawScreen(window);
+        else if (registration.active == true) registration.drawScreen(window);
         else if (mainMenu.active == true) mainMenu.drawScreen(window);
         else if (oAplikacji.active == true) oAplikacji.drawScreen(window);
 
