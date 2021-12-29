@@ -4,10 +4,80 @@
 #include <iostream>
 #include <locale.h> //do obslugi polskich znakow
 #include <string>
+#include <fstream>
 
 using namespace std;
 
-//klasy
+class User
+{
+public:
+    string userName;
+    string userPass;
+    int points = 0;
+
+    void save()
+    {
+        string temp;
+        std::fstream file;
+        file.open("konta.dat", std::ios::in);
+        if (file.is_open()) {
+            std::cout << "File was correctly opened!" << std::endl;
+            std::string line;
+            while(std::getline(file, line)) {
+            //process a single line
+                int pos;                                    // temporary variable for storing separator position
+
+                pos = line.find(';');                       // find position of first spearator
+                std::string fileUser = line.substr(0, pos);     // copy of a substring from position 0 to pos
+                line = line.substr(pos+1, line.length());   // assign line with a substring without first element
+
+                pos = line.find(';');
+                std::string filePassword = line.substr(0, pos);
+
+                std::string filePoints = line.substr(pos+1); // remaining, last element
+                if(fileUser != userName)
+                {
+                    temp = temp + fileUser + ';' + filePassword + ';' + filePoints + '\n';
+                }
+                else
+                {
+                    temp = temp + userName + ';' + userPass + ';' + to_string(points) + '\n';
+                }
+
+            }
+        }
+        file.close();
+
+        file.open("konta.dat", std::ios::out);
+        if (file.is_open()) {
+            std::cout << "File was correctly opened!" << std::endl;
+            file << temp;
+        }
+        file.close();
+    }
+};
+
+string szyfruj(string text)
+{
+	for(int i=0; i<text.length(); i++)
+	{
+	    if(text[i] + 5 == ';') text[i] = '-';
+        else text[i] = text[i] + 5;
+	}
+	return text;
+}
+
+string deszyfruj(string text)
+{
+	for(int i=0; i<text.length(); i++)
+	{
+
+		if(text[i] == '-') text[i] = 54;
+        else text[i] = text[i] - 5;
+	}
+	return text;
+}
+
 class Text
 {
 public:
@@ -83,7 +153,7 @@ public:
     sf::RectangleShape body;
     Text tekst;
     bool isTyping = false;
-    string textString = "tetete";
+    string textString = "";
 
     TextBox(int x, int y)
     {
@@ -202,7 +272,7 @@ public:
     Text login;
     Text password;
     Button button1; //powrót
-    Button button2; //zaloguj sie
+    Button button2; //zarejestruj sie
     TextBox textBox1;
     TextBox textBox2;
     bool active = false;
@@ -306,6 +376,7 @@ public:
 };
 
 
+
 int main()
 {
     setlocale(LC_CTYPE, "Polish");  //obsluga polskich znakow w napisach
@@ -317,6 +388,7 @@ int main()
     ScreenRegistration registration;
     ScreenMainMenu mainMenu;
     ScreenAplikacji oAplikacji;
+    User user;
 
     //logOrReg.active = true;
     //login.active = true;
@@ -383,6 +455,44 @@ int main()
                 {
                     login.textBox2.asciiCheck(static_cast<char>(event.text.unicode));
                 }
+
+                if(event.type == sf::Event::MouseButtonPressed && login.button2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    std::fstream file;
+                    file.open("konta.dat", std::ios::in);
+                    if (file.is_open()) {
+                        std::cout << "File was correctly opened!" << std::endl;
+                        std::string line;
+                        while(std::getline(file, line)) {
+                        //process a single line
+                            int pos;                                    // temporary variable for storing separator position
+
+                            pos = line.find(';');                       // find position of first spearator
+                            std::string fileUser = line.substr(0, pos);     // copy of a substring from position 0 to pos
+                            line = line.substr(pos+1, line.length());   // assign line with a substring without first element
+
+                            pos = line.find(';');
+                            std::string filePassword = line.substr(0, pos);
+                            std::string filePoints = line.substr(pos+1); // remaining, last element
+
+                            if(login.textBox1.textString == fileUser && login.textBox2.textString == filePassword)
+                            {
+                                user.userName = fileUser;
+                                user.userPass = filePassword;
+                                user.points = stoi(filePoints);
+                                login.active = false;
+                                mainMenu.active = true;
+                            }
+                        }
+                    }
+                    file.close();
+                }
+
+                if(event.type == sf::Event::MouseButtonPressed && login.button1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.active = true;
+                    login.active = false;
+                }
             }
             else if (registration.active == true)
             {
@@ -414,6 +524,60 @@ int main()
                 if (event.type == sf::Event::TextEntered && registration.textBox2.isTyping == true)
                 {
                     registration.textBox2.asciiCheck(static_cast<char>(event.text.unicode));
+                }
+
+                if(event.type == sf::Event::MouseButtonPressed && registration.button2.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    bool czyIstnieje = false;
+                    std::fstream file;
+                    file.open("konta.dat", std::ios::in);
+                    if (file.is_open()) {
+                        std::cout << "File was correctly opened!" << std::endl;
+                        std::string line;
+                        while(std::getline(file, line)) {
+                        //process a single line
+                            int pos;                                    // temporary variable for storing separator position
+
+                            pos = line.find(';');                       // find position of first spearator
+                            std::string fileUser = line.substr(0, pos);     // copy of a substring from position 0 to pos
+                            line = line.substr(pos+1, line.length());   // assign line with a substring without first element
+
+                            pos = line.find(';');
+                            std::string filePassword = line.substr(0, pos);
+
+                            std::string filePoints = line.substr(pos+1); // remaining, last element
+
+                            if(registration.textBox1.textString == fileUser)
+                            {
+                                std::cout << "Taki login juz istnieje." << std::endl;
+                                czyIstnieje = true;
+                                break;
+                            }
+                        }
+                    }
+                    file.close();
+
+                    if(!czyIstnieje)
+                    {
+                        file.open("konta.dat", std::ios::app);
+                        if (file.is_open()) {
+                            std::cout << "File was correctly opened!" << std::endl;
+                            file << registration.textBox1.textString << ";" << registration.textBox2.textString << ";0" << std::endl;
+                            user.userName = registration.textBox1.textString;
+                            user.userPass = registration.textBox2.textString;
+                            user.points = 0;
+                            registration.active = false;
+                            mainMenu.active = true;
+                        }
+                        file.close();
+                    }
+
+                }
+
+                if(event.type == sf::Event::MouseButtonPressed && registration.button1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    registration.active = false;
+                    login.active = true;
                 }
             }
 
