@@ -901,6 +901,13 @@ int main()
                             }
                     }
                 }
+
+                if (event.type == sf::Event::MouseButtonPressed && oznacz.Powrot.isHover(window) == true)
+                {
+                    oznacz.active = false;
+                    screenZadania.active = true;
+                }
+
             }
             else if (oAplikacji.active == true)
             {
