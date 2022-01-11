@@ -5,8 +5,30 @@
 #include <locale.h> //do obslugi polskich znakow
 #include <string>
 #include <fstream>
+#include <vector>
 
 using namespace std;
+
+string szyfruj(string text)
+{
+    for(int i=0; i<text.length(); i++)
+    {
+        if(text[i] + 5 == ';') text[i] = '-';
+        else text[i] = text[i] + 5;
+    }
+    return text;
+}
+
+string deszyfruj(string text)
+{
+    for(int i=0; i<text.length(); i++)
+    {
+
+        if(text[i] == '-') text[i] = 54;
+        else text[i] = text[i] - 5;
+    }
+    return text;
+}
 
 class User
 {
@@ -41,7 +63,7 @@ public:
                 }
                 else
                 {
-                    temp = temp + userName + ';' + userPass + ';' + to_string(points) + '\n';
+                    temp = temp + userName + ';' + szyfruj(userPass) + ';' + to_string(points) + '\n';
                 }
 
             }
@@ -57,26 +79,7 @@ public:
     }
 };
 
-string szyfruj(string text)
-{
-	for(int i=0; i<text.length(); i++)
-	{
-	    if(text[i] + 5 == ';') text[i] = '-';
-        else text[i] = text[i] + 5;
-	}
-	return text;
-}
 
-string deszyfruj(string text)
-{
-	for(int i=0; i<text.length(); i++)
-	{
-
-		if(text[i] == '-') text[i] = 54;
-        else text[i] = text[i] - 5;
-	}
-	return text;
-}
 
 class Text
 {
@@ -116,6 +119,16 @@ public:
     sf::Text text;
     sf::Font font;
 
+    Button()
+    {
+        body.setSize({100, 50});
+        body.setFillColor(sf::Color::White);
+        text.setFillColor(sf::Color::Red);
+        font.loadFromFile("arial.ttf");
+        text.setFont(font);
+        text.setCharacterSize(30);
+    }
+
     Button(float sizeX, float sizeY, int posX, int posY, sf::Color color)
     {
         body.setSize({sizeX, sizeY});
@@ -127,6 +140,14 @@ public:
         text.setFont(font);
         text.setCharacterSize(30);
         text.setString("przycisk");
+        text.setOrigin(text.getGlobalBounds().width/2, text.getGlobalBounds().height/2);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(body.getPosition().x + body.getGlobalBounds().width/2, body.getPosition().y + body.getGlobalBounds().height/2 - 15);
+    }
+
+    void textSetUp(string nazwa)
+    {
+        text.setString(nazwa);
         text.setOrigin(text.getGlobalBounds().width/2, text.getGlobalBounds().height/2);
         text.setFillColor(sf::Color::Black);
         text.setPosition(body.getPosition().x + body.getGlobalBounds().width/2, body.getPosition().y + body.getGlobalBounds().height/2 - 15);
@@ -194,18 +215,18 @@ public:
 class ScreenLogOrReg    //Login Or Registration
 {
 public:
-    Button button1; //Zaloguj się
+    Button button1; //Zaloguj sie
     Button button2; //Zarejestruj
     bool active = false;
 
     ScreenLogOrReg() : button1(500, 75, 380, 250, sf::Color::White), button2(500, 75, 380, 370, sf::Color::White)
     {
-        button1.text.setString(L"Zaloguj się");
+        button1.text.setString("Zaloguj sie");
         button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
         button1.text.setFillColor(sf::Color::Black);
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
 
-        button2.text.setString(L"Zarejestruj się");
+        button2.text.setString("Zarejestruj sie");
         button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
         button2.text.setFillColor(sf::Color::Black);
         button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
@@ -224,7 +245,7 @@ public:
     Text title;
     Text login;
     Text password;
-    Button button1; //powrót
+    Button button1; //powrÄ‚Ĺ‚t
     Button button2; //zaloguj sie
     TextBox textBox1;
     TextBox textBox2;
@@ -248,7 +269,7 @@ public:
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
 
         button2.text.setString("Zaloguj sie");
-        button2.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
         button2.text.setFillColor(sf::Color::Black);
         button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
     }
@@ -271,7 +292,7 @@ public:
     Text title;
     Text login;
     Text password;
-    Button button1; //powrót
+    Button button1; //powrÄ‚Ĺ‚t
     Button button2; //zarejestruj sie
     TextBox textBox1;
     TextBox textBox2;
@@ -295,7 +316,7 @@ public:
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
 
         button2.text.setString("Zarejestruj sie");
-        button2.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
         button2.text.setFillColor(sf::Color::Black);
         button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
     }
@@ -314,24 +335,44 @@ public:
 
 class ScreenMainMenu
 {
+private:
+    int width = 200;
+    int height = 75;
+    int posX = 540;
+
 public:
     Text title;
-    Button button1;
-    Button button2;
-    Button button3;
-    Button button4;
+    Button button1; //zadania
+    Button button2; //ranking
+    Button button3; //o aplikacji
+    Button button4; //wyjscie
     bool active = false;
 
-    ScreenMainMenu() : button1(200, 75, 100, 100, sf::Color::White), button2(200, 75, 100, 200, sf::Color::White),
-                       button3(200, 75, 100, 300, sf::Color::White), button4(200, 75, 100, 400, sf::Color::White)
+    ScreenMainMenu() : button1(width, height, posX, 120, sf::Color::White), button2(width, height, posX, 230, sf::Color::White),
+                       button3(width, height, posX, 340, sf::Color::White), button4(width, height, posX, 450, sf::Color::White)
     {
         title.setText("Menu");
-        title.setPosition(5, 5);
+        title.setPosition(600, 5);
+
+        button1.text.setString("Zadania");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString("Ranking");
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
 
         button3.text.setString("O aplikacji");
         button3.text.setOrigin(button3.text.getGlobalBounds().width/2, button3.text.getGlobalBounds().height/2);
         button3.text.setFillColor(sf::Color::Black);
         button3.text.setPosition(button3.body.getPosition().x + button3.body.getGlobalBounds().width/2, button3.body.getPosition().y + button3.body.getGlobalBounds().height/2 - 15);
+
+        button4.text.setString("Wyjscie");
+        button4.text.setOrigin(button4.text.getGlobalBounds().width/2, button4.text.getGlobalBounds().height/2);
+        button4.text.setFillColor(sf::Color::Black);
+        button4.text.setPosition(button4.body.getPosition().x + button4.body.getGlobalBounds().width/2, button4.body.getPosition().y + button4.body.getGlobalBounds().height/2 - 15);
     }
 
     void drawScreen(sf::RenderWindow &window)
@@ -344,6 +385,176 @@ public:
     }
 };
 
+class ScreenZadania
+{
+public:
+    Text title;
+    Button buttonPowrot; //powrÄ‚Ĺ‚t
+    Button buttonOznacz; //oznacz wykonane zadanie
+    Button buttonDodaj; //dodaj nowa kategorie
+    bool active = false;
+
+
+    ScreenZadania() : buttonPowrot(200, 75, 540, 550, sf::Color::White), buttonOznacz(400, 75, 440, 200, sf::Color::White), buttonDodaj(400, 75, 440, 350, sf::Color::White)
+    {
+        title.setText("Zadania");
+        title.setPosition(580, 5);
+
+        buttonPowrot.textSetUp("Powrot");
+        buttonOznacz.textSetUp("Oznacz wykonane zadanie");
+        buttonDodaj.textSetUp("Dodaj kategorie");
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        title.draw(window);
+        buttonPowrot.draw(window);
+        buttonOznacz.draw(window);
+        buttonDodaj.draw(window);
+    }
+};
+
+class Zadanie
+{
+public:
+    string nazwa_;
+    int punkty_;
+
+    Zadanie(std::string nazwa, int punkty) : nazwa_(nazwa), punkty_(punkty){}
+};
+
+class Zadania
+{
+public:
+    vector<Zadanie> zadania;
+
+    void zapiszDane()
+    {
+        std::fstream file;
+        file.open("zadania.dat", std::ios::out);
+        if (file.is_open()) {
+            std::cout << "Zapisuje plik" << std::endl;
+            for(auto &v : zadania) file << v.nazwa_ << ";" << v.punkty_ << endl;
+        }
+        file.close();
+    }
+
+    void wczytajDane()
+    {
+        std::fstream file;
+        file.open("zadania.dat", std::ios::in);
+        if (file.is_open()) {
+            std::cout << "Wczytuje plik" << std::endl;
+            std::string line;
+            while(std::getline(file, line)) {
+            //process a single line
+                int pos;                                    // temporary variable for storing separator position
+
+                pos = line.find(';');
+                std::string nazwaZadania = line.substr(0, pos);
+                std::string punktyZadania = line.substr(pos+1); // remaining, last element
+
+
+                zadania.emplace_back(Zadanie(nazwaZadania, stoi(punktyZadania)));
+            }
+        }
+        file.close();
+    }
+};
+
+class GuzikiZadania : public Button
+{
+public:
+    int punkty = 0;
+};
+
+class ScreenZadaniaOznacz
+{
+public:
+    Text TytulEkranu;
+    GuzikiZadania Buttons[5][5];
+    Button Powrot;
+    bool active = false;
+
+    ScreenZadaniaOznacz() : Powrot(150, 75, 540, 500, sf::Color::White)
+    {
+        TytulEkranu.setText("Oznacz Zadanie");
+        Powrot.textSetUp("Powrot");
+        for(int i = 0; i < 5; i++)
+        {
+            for(int j = 0; j < 5; j++)
+            {
+                Buttons[i][j].body.setPosition(100 + 110*j, 100 + 75*i);
+            }
+        }
+    }
+
+    void wczytajDane(Zadania &vec)
+    {
+        int counter = 0;
+        for(int i = 0; i < 5; i++)
+        {
+            for(int j = 0; j < 5; j++)
+            {
+                if (counter >= vec.zadania.size()) return;
+                Buttons[i][j].text.setString(vec.zadania[counter].nazwa_);
+                Buttons[i][j].textSetUp(vec.zadania[counter].nazwa_);
+                Buttons[i][j].punkty = vec.zadania[counter].punkty_;
+                counter++;
+            }
+        }
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        TytulEkranu.draw(window);
+        for(int i = 0; i < 5; i++)
+        {
+            for(int j = 0; j < 5; j++)
+            {
+                if (Buttons[i][j].punkty != 0) Buttons[i][j].draw(window);
+            }
+        }
+        Powrot.draw(window);
+    }
+};
+
+class ScreenDodaj
+{
+public:
+    Text title;
+    Button button1; //powrot
+    Button button2; //ok
+    TextBox textBoxNazwa;
+    TextBox textBoxPunkty;
+    bool active = false;
+
+
+    ScreenDodaj() : button1(200, 75, 540, 550, sf::Color::White), button2(200, 75, 540, 450, sf::Color::White), textBoxNazwa(490, 200), textBoxPunkty(490,300)
+    {
+        title.setText("Dodaj nowa kategorie");
+        title.setPosition(500, 5);
+
+        button1.text.setString("Powrot");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString("Ok");
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        title.draw(window);
+        button1.draw(window);
+        button2.draw(window);
+        textBoxNazwa.drawTextBox(window);
+        textBoxPunkty.drawTextBox(window);
+    }
+};
 
 class ScreenAplikacji
 {
@@ -353,15 +564,15 @@ public:
     Button button1;
     bool active = false;
 
-    ScreenAplikacji() : button1(200, 75, 400, 600, sf::Color::White)
+    ScreenAplikacji() : button1(200, 75, 550, 600, sf::Color::White)
     {
         title.setText("O aplikacji");
-        title.setPosition(600, 20);
+        title.setPosition(580, 20);
 
-        info.text.setString({"\„Splitter\" to aplikacja służąca do równomiernego podzia³u obowi¹zków\nwœród wspó³lokatorów. Pozwala na dodawanie domowychobowiązków\nwykonywanych przez u¿ytkowników. Posiada system punktowy motywuj¹cy\ndo systematycznej pracy. U¿ytkownik dostaje punkty \ ostosowane\ndo trudnoœci oraz poœwiêconego czasu na dane zadanie (np. za wyrzucenie\nœmieci czy rozwieszenie prania) . W ka¿dym miesi¹cu wspó³lokatorzy\npowinni otrzymaæ podobn¹ sumê punktów. Aktualny stan punktów mo¿na\nœledziæ w oknie „Ranking” jako tabelê oraz w formiewykresu."});
+        info.text.setString({"Splitter to aplikacja sluzaca do rownomiernego podzialu obowiazkow pomiedzy\nwspolokatorow. Pozwala na dodawanie domowych obowiazkow wykonywanych\nprzez uzytkownikow. Posiada system punktowy motywujacy do systematycznej\npracy. Uzytkownik dostaje punkty dostosowane do trudnosci oraz poswieconego\nczasu na dane zadanie (np. za wyrzucenie smieci czy rozwieszenie prania).\nW kazdym miesiacu wspolokatorzy powinni otrzymac podobna sume punktow.\nAktualny stan punktow mozna sledzic w oknie Ranking jako tabele oraz w formie\nwykresu."});
         info.setPosition(150, 200);
 
-        button1.text.setString(L"Powrót");
+        button1.text.setString("Powrot");
         button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
         button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
     }
@@ -376,7 +587,6 @@ public:
 };
 
 
-
 int main()
 {
     setlocale(LC_CTYPE, "Polish");  //obsluga polskich znakow w napisach
@@ -387,14 +597,23 @@ int main()
     ScreenLogin login;
     ScreenRegistration registration;
     ScreenMainMenu mainMenu;
+    ScreenZadania screenZadania;
+    ScreenZadaniaOznacz oznacz;
+    ScreenDodaj dodaj;
     ScreenAplikacji oAplikacji;
     User user;
+    Zadania zadania;
+    zadania.wczytajDane();
 
-    //logOrReg.active = true;
+    logOrReg.active = true;
     //login.active = true;
-    registration.active = true;
+    //registration.active = true;
     //mainMenu.active = true;
+    //zadania.active = true;
+    //oznacz.active = true;
+    //dodaj.active = true;
 
+    User users[5];
 
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Splitter");
     window.setFramerateLimit(60);
@@ -408,20 +627,17 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (mainMenu.active == true)
+            if (logOrReg.active == true)
             {
-                if (event.type == sf::Event::MouseButtonPressed && mainMenu.button3.isHover(window) == true)
+                if (event.type == sf::Event::MouseButtonPressed && logOrReg.button1.isHover(window) == true)
                 {
-                    mainMenu.active = false;
-                    oAplikacji.active = true;
+                    login.active = true;
+                    logOrReg.active = false;
                 }
-            }
-            else if (oAplikacji.active == true)
-            {
-                if (event.type == sf::Event::MouseButtonPressed && oAplikacji.button1.isHover(window) == true)
+                else if (event.type == sf::Event::MouseButtonPressed && logOrReg.button2.isHover(window) == true)
                 {
-                    mainMenu.active = true;
-                    oAplikacji.active = false;
+                    registration.active = true;
+                    logOrReg.active = false;
                 }
             }
             else if (login.active == true)
@@ -463,6 +679,7 @@ int main()
                     if (file.is_open()) {
                         std::cout << "File was correctly opened!" << std::endl;
                         std::string line;
+                        int counter = 0;
                         while(std::getline(file, line)) {
                         //process a single line
                             int pos;                                    // temporary variable for storing separator position
@@ -475,14 +692,19 @@ int main()
                             std::string filePassword = line.substr(0, pos);
                             std::string filePoints = line.substr(pos+1); // remaining, last element
 
-                            if(login.textBox1.textString == fileUser && login.textBox2.textString == filePassword)
+                            if(login.textBox1.textString == fileUser && login.textBox2.textString == deszyfruj(filePassword))
                             {
                                 user.userName = fileUser;
-                                user.userPass = filePassword;
+                                user.userPass = deszyfruj(filePassword);
                                 user.points = stoi(filePoints);
                                 login.active = false;
                                 mainMenu.active = true;
                             }
+                            User temp;
+                            temp.userName = fileUser;
+                            temp.points = stoi(filePoints);
+                            users[counter] = temp;
+                            counter++;
                         }
                     }
                     file.close();
@@ -490,7 +712,7 @@ int main()
 
                 if(event.type == sf::Event::MouseButtonPressed && login.button1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
-                    registration.active = true;
+                    logOrReg.active = true;
                     login.active = false;
                 }
             }
@@ -532,7 +754,6 @@ int main()
                     std::fstream file;
                     file.open("konta.dat", std::ios::in);
                     if (file.is_open()) {
-                        std::cout << "File was correctly opened!" << std::endl;
                         std::string line;
                         while(std::getline(file, line)) {
                         //process a single line
@@ -561,8 +782,7 @@ int main()
                     {
                         file.open("konta.dat", std::ios::app);
                         if (file.is_open()) {
-                            std::cout << "File was correctly opened!" << std::endl;
-                            file << registration.textBox1.textString << ";" << registration.textBox2.textString << ";0" << std::endl;
+                            file << registration.textBox1.textString << ";" << szyfruj(registration.textBox2.textString) << ";0" << std::endl;
                             user.userName = registration.textBox1.textString;
                             user.userPass = registration.textBox2.textString;
                             user.points = 0;
@@ -577,12 +797,120 @@ int main()
                 if(event.type == sf::Event::MouseButtonPressed && registration.button1.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
                 {
                     registration.active = false;
-                    login.active = true;
+                    logOrReg.active = true;
                 }
             }
+            else if (mainMenu.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && mainMenu.button1.isHover(window) == true)
+                {
+                    mainMenu.active = false;
+                    screenZadania.active = true;
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && mainMenu.button3.isHover(window) == true)
+                {
+                    mainMenu.active = false;
+                    oAplikacji.active = true;
+                }
+            }
+            else if (screenZadania.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && screenZadania.buttonPowrot.isHover(window) == true)
+                {
+                    mainMenu.active = true;
+                    screenZadania.active = false;
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && screenZadania.buttonOznacz.isHover(window) == true)
+                {
+                    screenZadania.active = false;
+                    oznacz.active = true;
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && screenZadania.buttonDodaj.isHover(window) == true)
+                {
+                    screenZadania.active = false;
+                    dodaj.active = true;
+                }
+
+            }
+            else if (dodaj.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && dodaj.textBoxNazwa.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    dodaj.textBoxNazwa.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !dodaj.textBoxNazwa.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    dodaj.textBoxNazwa.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && dodaj.textBoxNazwa.isTyping == true)
+                {
+                    dodaj.textBoxNazwa.asciiCheck(static_cast<char>(event.text.unicode));
+                }
 
 
-        }
+                if (event.type == sf::Event::MouseButtonPressed && dodaj.textBoxPunkty.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    dodaj.textBoxPunkty.isTyping = true;
+
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && !dodaj.textBoxPunkty.body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                {
+                    dodaj.textBoxPunkty.isTyping = false;
+                }
+
+                if (event.type == sf::Event::TextEntered && dodaj.textBoxPunkty.isTyping == true)
+                {
+                    dodaj.textBoxPunkty.asciiCheck(static_cast<char>(event.text.unicode));
+                }
+
+
+                if (event.type == sf::Event::MouseButtonPressed && dodaj.button2.isHover(window) == true)
+                {
+                    if(dodaj.textBoxNazwa.textString != "" && stoi(dodaj.textBoxPunkty.textString) > 0)
+                    {
+                        zadania.zadania.emplace_back(Zadanie(dodaj.textBoxNazwa.textString, stoi(dodaj.textBoxPunkty.textString)));
+                        zadania.zapiszDane();
+                    }
+                    else
+                    {
+                        cout << "Prosze wpisac dane" << endl;
+                    }
+                }
+
+                if (event.type == sf::Event::MouseButtonPressed && dodaj.button1.isHover(window) == true)
+                {
+                    dodaj.active = false;
+                    screenZadania.active = true;
+                }
+            }
+            else if (oznacz.active == true)
+            {
+                oznacz.wczytajDane(zadania);
+                for(int i=0; i<5; i++)
+                {
+                    for(int j=0; j<5; j++)
+                    {
+                        if(oznacz.Buttons[i][j].punkty != 0)
+                            if(event.type == sf::Event::MouseButtonPressed && oznacz.Buttons[i][j].body.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
+                            {
+                                cout << "guzik " << i << " " << j << " " << oznacz.Buttons[i][j].punkty << endl;
+                                user.points += oznacz.Buttons[i][j].punkty;
+                                user.save();
+                            }
+                    }
+                }
+            }
+            else if (oAplikacji.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && oAplikacji.button1.isHover(window) == true)
+                {
+                    mainMenu.active = true;
+                    oAplikacji.active = false;
+                }
+            }
+                    }
         // clear the window with black color
         window.clear(sf::Color::Black);
 
@@ -591,6 +919,9 @@ int main()
         else if (login.active == true) login.drawScreen(window);
         else if (registration.active == true) registration.drawScreen(window);
         else if (mainMenu.active == true) mainMenu.drawScreen(window);
+        else if (screenZadania.active == true) screenZadania.drawScreen(window);
+        else if (oznacz.active == true) oznacz.drawScreen(window);
+        else if (dodaj.active == true) dodaj.drawScreen(window);
         else if (oAplikacji.active == true) oAplikacji.drawScreen(window);
 
         window.display();
