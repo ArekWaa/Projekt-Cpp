@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <ctime>
 #include <iostream>
-#include <locale.h> //do obslugi polskich znakow
 #include <string>
 #include <fstream>
 #include <vector>
@@ -79,8 +78,6 @@ public:
     }
 };
 
-
-
 class Text
 {
 public:
@@ -121,7 +118,7 @@ public:
 
     Button()
     {
-        body.setSize({100, 50});
+        body.setSize({200, 50});
         body.setFillColor(sf::Color::White);
         text.setFillColor(sf::Color::Red);
         font.loadFromFile("arial.ttf");
@@ -245,7 +242,7 @@ public:
     Text title;
     Text login;
     Text password;
-    Button button1; //powrÄ‚Ĺ‚t
+    Button button1; //powrot
     Button button2; //zaloguj sie
     TextBox textBox1;
     TextBox textBox2;
@@ -292,7 +289,7 @@ public:
     Text title;
     Text login;
     Text password;
-    Button button1; //powrÄ‚Ĺ‚t
+    Button button1; //powrot
     Button button2; //zarejestruj sie
     TextBox textBox1;
     TextBox textBox2;
@@ -389,7 +386,7 @@ class ScreenZadania
 {
 public:
     Text title;
-    Button buttonPowrot; //powrÄ‚Ĺ‚t
+    Button buttonPowrot; //powrot
     Button buttonOznacz; //oznacz wykonane zadanie
     Button buttonDodaj; //dodaj nowa kategorie
     bool active = false;
@@ -484,7 +481,7 @@ public:
         {
             for(int j = 0; j < 5; j++)
             {
-                Buttons[i][j].body.setPosition(100 + 110*j, 100 + 75*i);
+                Buttons[i][j].body.setPosition(100 + 220*j, 100 + 75*i);
             }
         }
     }
@@ -586,6 +583,331 @@ public:
     }
 };
 
+class ScreenRankingGlowny
+{
+public:
+    Button button1; //tabela
+    Button button2; //wykres
+    Button buttonPowrot; //powrot
+    bool active = false;
+
+    ScreenRankingGlowny() : button1(500, 75, 380, 250, sf::Color::White), button2(500, 75, 380, 370, sf::Color::White), buttonPowrot(200, 75, 540, 550, sf::Color::White)
+    {
+        button1.text.setString("Tabela");
+        button1.text.setOrigin(button1.text.getGlobalBounds().width/2, button1.text.getGlobalBounds().height/2);
+        button1.text.setFillColor(sf::Color::Black);
+        button1.text.setPosition(button1.body.getPosition().x + button1.body.getGlobalBounds().width/2, button1.body.getPosition().y + button1.body.getGlobalBounds().height/2 - 15);
+
+        button2.text.setString("Wykres");
+        button2.text.setOrigin(button2.text.getGlobalBounds().width/2, button2.text.getGlobalBounds().height/2);
+        button2.text.setFillColor(sf::Color::Black);
+        button2.text.setPosition(button2.body.getPosition().x + button2.body.getGlobalBounds().width/2, button2.body.getPosition().y + button2.body.getGlobalBounds().height/2 - 15);
+
+        buttonPowrot.textSetUp("Powrot");
+    }
+
+    void drawScreen(sf::RenderWindow &window)
+    {
+        button1.draw(window);
+        button2.draw(window);
+        buttonPowrot.draw(window);
+    }
+};
+
+class Tablebox
+{
+public:
+    sf::RectangleShape box;
+    Text text;
+    Tablebox(sf::Vector2f size)
+    {
+        box.setSize(size);
+        box.setOutlineThickness(1);
+        box.setOutlineColor(sf::Color::Black);
+        text.text.setFillColor(sf::Color::Black);
+        text.text.setCharacterSize(20);
+    }
+    Tablebox()
+    {
+        box.setSize({225, 45});
+        box.setOutlineThickness(1);
+        box.setOutlineColor(sf::Color::Black);
+        text.text.setFillColor(sf::Color::Black);
+        text.text.setCharacterSize(20);
+    }
+    void setPosition(int x, int y)
+    {
+        box.setPosition(x, y);
+        text.setPosition(x + 5, y + 5);
+    }
+    void drawBox(sf::RenderWindow &window)
+    {
+        window.draw(box);
+        text.draw(window);
+    }
+};
+
+class Table
+{
+public:
+    int rows_;
+    int columns_;
+    Tablebox header[5];
+    Tablebox body[5][10];
+    Tablebox nr[11];
+
+    Table(int rows, int columns)
+    {
+        rows_ = rows;
+        columns_ = columns;
+        for (int i = 0; i < rows; i++)
+        {
+            header[i].setPosition(50 + 225*i, 70);
+            header[i].box.setOutlineThickness(2);
+        }
+        for (int j = 0; j < columns; j++)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                body[i][j].setPosition(50 + 225 * i, 115 + 45 * j);
+            }
+        }
+        for (int i = 0; i < columns+1; i++)
+        {
+            nr[i].box.setSize({45, 45});
+            nr[i].setPosition(5, 70 + 45 * i);
+            nr[i].box.setOutlineThickness(2);
+            if (i == 0) nr[i].text.setText("nr");
+            else nr[i].text.setText(static_cast<char>(i));
+        }
+    }
+    void draw(sf::RenderWindow &window)
+    {
+        for (int j = 0; j < columns_; j++)
+        {
+            for (int i = 0; i < rows_; i++)
+            {
+                body[i][j].drawBox(window);
+            }
+        }
+
+        for (int i = 0; i < columns_+1; i++)
+        {
+            nr[i].drawBox(window);
+        }
+        for (int i = 0; i < rows_; i++)
+        {
+            header[i].drawBox(window);
+        }
+    }
+
+    void setPosition(int x, int y)
+    {
+        for (int j = 0; j < columns_; j++)
+        {
+            for (int i = 0; i < rows_; i++)
+            {
+                body[i][j].setPosition(body[i][j].box.getPosition().x + x, body[i][j].box.getPosition().y + y);
+            }
+        }
+        for (int i = 0; i < columns_+1; i++)
+        {
+            nr[i].setPosition(nr[i].box.getPosition().x + x, nr[i].box.getPosition().y + y);
+        }
+        for (int i = 0; i < rows_; i++)
+        {
+            header[i].setPosition(header[i].box.getPosition().x + x, header[i].box.getPosition().y + y);
+        }
+    }
+};
+
+class GraphOneBox
+{
+public:
+    sf::RectangleShape rec;
+    Text text;
+
+    GraphOneBox()
+    {
+        rec.setSize({120, 250});
+        text.setText("text");
+        rec.setOrigin(rec.getPosition().x, rec.getPosition().y + rec.getGlobalBounds().height);
+        text.setPosition(rec.getPosition().x + 15, rec.getPosition().y + 10);
+    }
+
+    void setValue(std::string tex, float scale)
+    {
+        text.setText(tex);
+        rec.setScale(1, scale);
+    }
+
+    void drawSingle(sf::RenderWindow &window)
+    {
+        window.draw(rec);
+        text.draw(window);
+    }
+
+    void setPosition(int x, int y)
+    {
+        rec.setPosition(x, y);
+        text.setPosition(rec.getPosition().x + 15, rec.getPosition().y + 10);
+    }
+};
+
+bool bigger(User a, User b)
+{
+    if (a.points > b.points) return true;
+    else return false;
+}
+
+class Graph
+{
+public:
+    GraphOneBox body[5];
+
+    Graph()
+    {
+        for (int i=0; i<5; i++)
+        {
+            body[i].setPosition(100+ 150*i, 400);
+        }
+    }
+
+    void setPos(int x, int y)
+    {
+        for (int i=0; i<5; i++)
+        {
+            body[i].setPosition(x+ 150*i, y);
+        }
+    }
+
+
+
+    void loadData()
+    {
+        vector<User> vec;
+        std::fstream file;
+        int counter = 0;
+        file.open("konta.dat", std::ios::in);
+        if (file.is_open()) {
+            std::string line;
+            while(std::getline(file, line)) {
+            //process a single line
+                int pos;                                    // temporary variable for storing separator position
+
+                User temp;
+                pos = line.find(';');                       // find position of first spearator
+                std::string fileUser = line.substr(0, pos);     // copy of a substring from position 0 to pos
+                line = line.substr(pos+1, line.length());   // assign line with a substring without first element
+
+                pos = line.find(';');
+                std::string filePassword = line.substr(0, pos);
+
+                std::string filePoints = line.substr(pos+1); // remaining, last element
+                temp.userName = fileUser;
+                temp.points = stoi(filePoints);
+                vec.emplace_back(temp);
+                counter++;
+            }
+        }
+        file.close();
+        int najwiekszy = 0;
+        sort(vec.begin(), vec.end(), bigger);
+        //szukaj najwiekszej ilosci punktow
+        for(int i=0; i<vec.size(); i++)
+        {
+            if (vec[i].points > najwiekszy) najwiekszy = vec[i].points;
+        }
+        for(int i=0; i<5; i++)
+        {
+            if(i<counter) body[i].setValue(vec[i].userName, static_cast<float>(vec[i].points)/najwiekszy);
+            else body[i].setValue("",0);
+        }
+
+    }
+
+    void drawGraph(sf::RenderWindow &window)
+    {
+        for (int i=0; i<5; i++)
+        {
+            body[i].drawSingle(window);
+        }
+    }
+};
+
+class ScreenRankingTabela
+{
+public:
+        Table tablica;
+        bool active = false;
+        ScreenRankingTabela(): tablica(1,10)
+        {
+            tablica.header[0].text.setText("Login");
+        }
+
+        bool compare(User zmienna1, User zmienna2)
+        {
+            if(zmienna1.points < zmienna2.points) return true;
+            else return false;
+        }
+
+        void loadData()
+        {
+            vector <User> vec;
+            std::fstream file;
+            file.open("konta.dat", std::ios::in);
+            if (file.is_open()) {
+                std::string line;
+                while(std::getline(file, line)) {
+                //process a single line
+                    int pos;                                    // temporary variable for storing separator position
+
+                    User temp;
+                    pos = line.find(';');                       // find position of first spearator
+                    std::string fileUser = line.substr(0, pos);     // copy of a substring from position 0 to pos
+                    line = line.substr(pos+1, line.length());   // assign line with a substring without first element
+
+                    pos = line.find(';');
+                    std::string filePassword = line.substr(0, pos);
+
+                    std::string filePoints = line.substr(pos+1); // remaining, last element
+                    temp.userName = fileUser;
+                    temp.points = stoi(filePoints);
+                    vec.emplace_back(temp);
+                }
+            }
+            file.close();
+            sort(vec.begin(), vec.end(), bigger);
+            int tmp = vec.size();
+            if (vec.size()>10) tmp = 10;
+            for(int i=0; i<tmp; i++)
+            {
+                tablica.body[0][i].text.setText(vec[i].userName);
+            }
+        }
+
+        void drawScreen(sf::RenderWindow &window)
+        {
+            tablica.draw(window);
+        }
+};
+
+
+class ScreenRankingWykres
+{
+public:
+    bool active = false;
+    Graph graph;
+
+    ScreenRankingWykres()
+    {
+        graph.setPos(200, 500);
+    }
+    void drawScreen(sf::RenderWindow &window)
+    {
+        graph.drawGraph(window);
+    }
+};
 
 int main()
 {
@@ -600,6 +922,9 @@ int main()
     ScreenZadania screenZadania;
     ScreenZadaniaOznacz oznacz;
     ScreenDodaj dodaj;
+    ScreenRankingGlowny screenRankingGlowny;
+    ScreenRankingTabela screenRankingTabela;
+    ScreenRankingWykres screenRankingWykres;
     ScreenAplikacji oAplikacji;
     User user;
     Zadania zadania;
@@ -613,7 +938,6 @@ int main()
     //oznacz.active = true;
     //dodaj.active = true;
 
-    User users[5];
 
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Splitter");
     window.setFramerateLimit(60);
@@ -679,7 +1003,6 @@ int main()
                     if (file.is_open()) {
                         std::cout << "File was correctly opened!" << std::endl;
                         std::string line;
-                        int counter = 0;
                         while(std::getline(file, line)) {
                         //process a single line
                             int pos;                                    // temporary variable for storing separator position
@@ -694,6 +1017,7 @@ int main()
 
                             if(login.textBox1.textString == fileUser && login.textBox2.textString == deszyfruj(filePassword))
                             {
+                                cout << "logged in" << endl;
                                 user.userName = fileUser;
                                 user.userPass = deszyfruj(filePassword);
                                 user.points = stoi(filePoints);
@@ -703,8 +1027,7 @@ int main()
                             User temp;
                             temp.userName = fileUser;
                             temp.points = stoi(filePoints);
-                            users[counter] = temp;
-                            counter++;
+
                         }
                     }
                     file.close();
@@ -807,10 +1130,19 @@ int main()
                     mainMenu.active = false;
                     screenZadania.active = true;
                 }
+                else if (event.type == sf::Event::MouseButtonPressed && mainMenu.button2.isHover(window) == true)
+                {
+                    mainMenu.active = false;
+                    screenRankingGlowny.active = true;
+                }
                 else if (event.type == sf::Event::MouseButtonPressed && mainMenu.button3.isHover(window) == true)
                 {
                     mainMenu.active = false;
                     oAplikacji.active = true;
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && mainMenu.button4.isHover(window) == true)
+                {
+                    window.close();
                 }
             }
             else if (screenZadania.active == true)
@@ -917,7 +1249,43 @@ int main()
                     oAplikacji.active = false;
                 }
             }
-                    }
+            else if (screenRankingGlowny.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed && screenRankingGlowny.button1.isHover(window) == true)
+                {
+                    screenRankingGlowny.active = false;
+                    screenRankingTabela.active = true;
+                    screenRankingTabela.loadData();
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && screenRankingGlowny.button2.isHover(window) == true)
+                {
+                    screenRankingGlowny.active = false;
+                    screenRankingWykres.active = true;
+                    screenRankingWykres.graph.loadData();
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && screenRankingGlowny.buttonPowrot.isHover(window) == true)
+                {
+                    screenRankingGlowny.active = false;
+                    mainMenu.active = true;
+                }
+            }
+            else if (screenRankingTabela.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed)
+                {
+                    screenRankingTabela.active = false;
+                    screenRankingGlowny.active = true;
+                }
+            }
+            else if (screenRankingWykres.active == true)
+            {
+                if (event.type == sf::Event::MouseButtonPressed)
+                {
+                    screenRankingWykres.active = false;
+                    screenRankingGlowny.active = true;
+                }
+            }
+        }
         // clear the window with black color
         window.clear(sf::Color::Black);
 
@@ -930,7 +1298,9 @@ int main()
         else if (oznacz.active == true) oznacz.drawScreen(window);
         else if (dodaj.active == true) dodaj.drawScreen(window);
         else if (oAplikacji.active == true) oAplikacji.drawScreen(window);
-
+        else if (screenRankingGlowny.active == true) screenRankingGlowny.drawScreen(window);
+        else if (screenRankingTabela.active == true) screenRankingTabela.drawScreen(window);
+        else if (screenRankingWykres.active == true) screenRankingWykres.drawScreen(window);
         window.display();
     }
     return 0;
